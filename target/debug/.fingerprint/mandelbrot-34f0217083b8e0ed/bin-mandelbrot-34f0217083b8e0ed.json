@@ -1,0 +1,1 @@
+{"rustc":5362242119021711120,"features":"[]","target":1982348880442928696,"profile":13944670406066585343,"path":1036222786711178230,"deps":[["num v0.2.0","num",15110586836326581087]],"local":[{"MtimeBased":[[1534836888,588863790],".fingerprint/mandelbrot-34f0217083b8e0ed/dep-bin-mandelbrot-34f0217083b8e0ed"]}],"rustflags":[],"edition":"Edition2015"}
