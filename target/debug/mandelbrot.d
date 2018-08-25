@@ -1,1 +1,1 @@
-/Users/matsuoka/projects/rust/ProgrammingRust/mandelbrot/target/debug/mandelbrot.dSYM: /Users/matsuoka/projects/rust/ProgrammingRust/mandelbrot/src/main.rs
+/Users/matsuoka/projects/rust/mandelbrot/mandelbrot/target/debug/mandelbrot.dSYM: /Users/matsuoka/projects/rust/mandelbrot/mandelbrot/src/main.rs
