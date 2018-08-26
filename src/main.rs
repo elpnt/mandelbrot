@@ -41,8 +41,7 @@ fn main() {
             z = z * z + c;
             i = t;
         }
-        // Create an 8bit pixel of type Luma and value i
-        // and assign in to the pixel at position (x, y)
+        
         let intensity = 255 - i as u8;
         *pixel = image::Rgba([intensity; 4]);
     }
