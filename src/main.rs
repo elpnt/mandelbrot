@@ -2,60 +2,68 @@ extern crate num;
 extern crate image;
 extern crate piston_window;
 
-use num::Complex;
 use piston_window::*;
 
 fn main() {
-    let max_iter: u32 = 255;
 
-    let imgx: u32 = 800;
-    let imgy: u32 = 800;
+    const WIDTH: u32 = 640;
+    const HEIGHT: u32 = 480;
 
-    let scalex = 1.0 / imgx as f32;
-    let scaley = 1.0 / imgy as f32;
-
-    let mut window: PistonWindow = WindowSettings::new("Mandelbrot", [imgx, imgy])
-        .samples(4)
+    let mut window: PistonWindow = WindowSettings::new("Draw Rectangle", [WIDTH, HEIGHT])
         .vsync(true)
         .exit_on_esc(true)
         .build()
         .unwrap();
 
-    // Create a new ImgBuf with width: imgx and height: imgy
-    let mut imgbuf = image::RgbaImage::new(imgx, imgy);
+    let mut drawing = false;
+    let mut released = false;
 
-    // Iterate over the coordinates and pixels of the image
-    for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
-        let cx = x as f32 * scalex * 2.0 - 1.5;
-        let cy = y as f32 * scaley * 2.0 - 1.0;
+    let mut first_pos: Option<[f64; 2]> = None;
+    let mut last_pos: Option<[f64; 2]> = None;
 
-        let mut z = Complex::new(0.0, 0.0);
-        let c = Complex::new(cx, cy);
+    let mut x0: f64 = 0.0;
+    let mut y0: f64 = 0.0;
+    let mut x1: f64 = 0.0;
+    let mut y1: f64 = 0.0;
 
-        let mut i = 0;
-
-        for t in 0..max_iter {
-            if z.norm_sqr() > 4.0 {
-                break
-            }
-            z = z * z + c;
-            i = t;
-        }
-        
-        let intensity = 255 - i as u8;
-        *pixel = image::Rgba([intensity; 4]);
-    }
-
-    let imgtexture: G2dTexture = Texture::from_image(
-            &mut window.factory,
-            &imgbuf,
-            &TextureSettings::new()
-            ).unwrap();
+    let mut cursor_move_count: u32 = 0;
 
     while let Some(e) = window.next() {
+        
+        if let Some(button) = e.press_args() {
+            if button == Button::Mouse(MouseButton::Left) {
+                drawing = true;
+            }
+        };
+
+        if let Some(button) = e.release_args() {
+            if button == Button::Mouse(MouseButton::Left) {
+                drawing = false;
+                cursor_move_count = 0;
+                released = true;
+            }
+        };
+
+        if let Some(cursor) = e.mouse_cursor_args() {
+            if drawing {
+                cursor_move_count += 1;
+                if cursor_move_count == 1 {
+                    x0 = cursor[0] as f64;
+                    y0 = cursor[1] as f64;
+                    // println!("{}: Pressed at ({}, {})", cursor_move_count, x0, y0);
+                }
+            } 
+            
+            x1 = cursor[0] as f64;
+            y1 = cursor[1] as f64;
+            // println!("{}: Released at ({}, {})", cursor_move_count, x1, y1);
+        };
+
         window.draw_2d(&e, |c, g| {
             clear([0.0; 4], g);
-            image(&imgtexture, c.transform, g);
+            rectangle([1.0, 0.0, 0.0, 0.2],
+                      [x0, y0, x1-x0, y1-y0],
+                      c.transform, g);
         });
     }
 
