@@ -15,16 +15,17 @@ fn main() {
         .build()
         .unwrap();
 
+    let mut first_draw = false;
     let mut drawing = false;
     let mut released = false;
 
     let mut first_pos: Option<[f64; 2]> = None;
     let mut last_pos: Option<[f64; 2]> = None;
 
-    let mut x0: f64 = 0.0;
-    let mut y0: f64 = 0.0;
-    let mut x1: f64 = 0.0;
-    let mut y1: f64 = 0.0;
+    let mut rect_x0: f64 = 0.0;
+    let mut rect_y0: f64 = 0.0;
+    let mut rect_x1: f64 = 0.0;
+    let mut rect_y1: f64 = 0.0;
 
     let mut cursor_move_count: u32 = 0;
 
@@ -32,6 +33,7 @@ fn main() {
         
         if let Some(button) = e.press_args() {
             if button == Button::Mouse(MouseButton::Left) {
+                first_draw = true;
                 drawing = true;
             }
         };
@@ -48,22 +50,24 @@ fn main() {
             if drawing {
                 cursor_move_count += 1;
                 if cursor_move_count == 1 {
-                    x0 = cursor[0] as f64;
-                    y0 = cursor[1] as f64;
-                    // println!("{}: Pressed at ({}, {})", cursor_move_count, x0, y0);
+                    rect_x0 = cursor[0] as f64;
+                    rect_y0 = cursor[1] as f64;
+                    // println!("{}: Pressed at ({}, {})", cursor_move_count, rect_x0, rect_y0);
                 }
             } 
             
-            x1 = cursor[0] as f64;
-            y1 = cursor[1] as f64;
-            // println!("{}: Released at ({}, {})", cursor_move_count, x1, y1);
+            rect_x1 = cursor[0] as f64;
+            rect_y1 = cursor[1] as f64;
+            // println!("{}: Released at ({}, {})", cursor_move_count, rect_x1, rect_y1);
         };
 
         window.draw_2d(&e, |c, g| {
-            clear([0.0; 4], g);
-            rectangle([1.0, 0.0, 0.0, 0.2],
-                      [x0, y0, x1-x0, y1-y0],
-                      c.transform, g);
+            clear([1.0; 4], g);
+            if first_draw {
+                rectangle([1.0, 0.0, 0.0, 0.2],
+                          [rect_x0, rect_y0, rect_x1-rect_x0, rect_y1-rect_y0],
+                          c.transform, g);
+            }
         });
     }
 
