@@ -9,8 +9,10 @@ fn main() {
     const WIDTH: u32 = 640;
     const HEIGHT: u32 = 480;
 
-    let mut window: PistonWindow = WindowSettings::new("Draw Rectangle", [WIDTH, HEIGHT])
-        .vsync(true)
+    let mut window: PistonWindow = WindowSettings::new(
+        "Draw Rectangle",
+        [WIDTH, HEIGHT]
+        ).vsync(true)
         .exit_on_esc(true)
         .build()
         .unwrap();
@@ -30,7 +32,7 @@ fn main() {
     let mut cursor_move_count: u32 = 0;
 
     while let Some(e) = window.next() {
-        
+       
         if let Some(button) = e.press_args() {
             if button == Button::Mouse(MouseButton::Left) {
                 first_draw = true;
@@ -63,6 +65,7 @@ fn main() {
 
         window.draw_2d(&e, |c, g| {
             clear([1.0; 4], g);
+
             if first_draw {
                 rectangle([1.0, 0.0, 0.0, 0.2],
                           [rect_x0, rect_y0, rect_x1-rect_x0, rect_y1-rect_y0],
