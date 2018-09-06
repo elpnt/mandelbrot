@@ -2,9 +2,9 @@ extern crate num;
 extern crate image;
 extern crate piston_window;
 
-use num::Complex;
 use piston_window::*;
 
+<<<<<<< HEAD
 const WIDTH: u32 = 500;
 const HEIGHT: u32 = 500;
 
@@ -60,16 +60,47 @@ fn _initial_draw(imgx: u32, imgy: u32, max_iter: u8) -> image::RgbaImage {
     for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
         let cx = x as f32 * scalex * 2.0 - 1.5;
         let cy = y as f32 * scaley * 2.0 - 1.0;
+=======
+fn main() {
 
-        let mut z = Complex::new(0.0, 0.0);
-        let c = Complex::new(cx, cy);
+    const WIDTH: u32 = 640;
+    const HEIGHT: u32 = 480;
 
+    let mut window: PistonWindow = WindowSettings::new(
+        "Draw Rectangle",
+        [WIDTH, HEIGHT]
+        ).vsync(true)
+        .exit_on_esc(true)
+        .build()
+        .unwrap();
+
+    let mut first_draw = false;
+    let mut drawing = false;
+    let mut released = false;
+
+    let mut first_pos: Option<[f64; 2]> = None;
+    let mut last_pos: Option<[f64; 2]> = None;
+>>>>>>> 381098ce0d9afe7d54835b64aa8895505b724f79
+
+    let mut rect_x0: f64 = 0.0;
+    let mut rect_y0: f64 = 0.0;
+    let mut rect_x1: f64 = 0.0;
+    let mut rect_y1: f64 = 0.0;
+
+<<<<<<< HEAD
         let mut i: u8 = 0;
+=======
+    let mut cursor_move_count: u32 = 0;
+>>>>>>> 381098ce0d9afe7d54835b64aa8895505b724f79
 
-        for t in 0..max_iter {
-            if z.norm_sqr() > 4.0 {
-                break
+    while let Some(e) = window.next() {
+       
+        if let Some(button) = e.press_args() {
+            if button == Button::Mouse(MouseButton::Left) {
+                first_draw = true;
+                drawing = true;
             }
+<<<<<<< HEAD
             z = z * z + c;
             i = t;
         }
@@ -97,17 +128,41 @@ fn main() {
 
     let mut imgbuf = initial_draw(bounds, max_iter);
     // let mut imgbuf = _initial_draw(bounds.0, bounds.1, max_iter);
+=======
+        };
 
-    let imgtexture: G2dTexture = Texture::from_image(
-            &mut window.factory,
-            &imgbuf,
-            &TextureSettings::new()
-            ).unwrap();
+        if let Some(button) = e.release_args() {
+            if button == Button::Mouse(MouseButton::Left) {
+                drawing = false;
+                cursor_move_count = 0;
+                released = true;
+            }
+        };
+>>>>>>> 381098ce0d9afe7d54835b64aa8895505b724f79
 
-    while let Some(e) = window.next() {
+        if let Some(cursor) = e.mouse_cursor_args() {
+            if drawing {
+                cursor_move_count += 1;
+                if cursor_move_count == 1 {
+                    rect_x0 = cursor[0] as f64;
+                    rect_y0 = cursor[1] as f64;
+                    // println!("{}: Pressed at ({}, {})", cursor_move_count, rect_x0, rect_y0);
+                }
+            } 
+            
+            rect_x1 = cursor[0] as f64;
+            rect_y1 = cursor[1] as f64;
+            // println!("{}: Released at ({}, {})", cursor_move_count, rect_x1, rect_y1);
+        };
+
         window.draw_2d(&e, |c, g| {
-            clear([0.0; 4], g);
-            image(&imgtexture, c.transform, g);
+            clear([1.0; 4], g);
+
+            if first_draw {
+                rectangle([1.0, 0.0, 0.0, 0.2],
+                          [rect_x0, rect_y0, rect_x1-rect_x0, rect_y1-rect_y0],
+                          c.transform, g);
+            }
         });
     }
 
